@@ -28,4 +28,3 @@ Skills: XML JAVA mySQL Firebase HTML CSS
 
 ![GitHub streak stats](https://streak-stats.demolab.com/?user=tarekuzjaman5)  
 
-![Profile views](https://gpvc.arturio.dev/tarekuzjaman5)  
