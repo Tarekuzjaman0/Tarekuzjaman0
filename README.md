@@ -23,5 +23,4 @@ Skills: XML JAVA Python  mySQL Firebase HTML CSS
 
 ![GitHub metrics](https://metrics.lecoq.io/tarekuzjaman5)  
 
-![GitHub streak stats](https://streak-stats.demolab.com/?user=tarekuzjaman5)  
 
