@@ -1,6 +1,6 @@
 ### Hi there 👋, My Name is TarekuzJaman
 #### Android Developer
-![Android Developer](https://web.facebook.com/photo/?fbid=1254592855476848&set=a.248083079461169)
+
 
 Hi, I am an experienced mobile application developer. I have been working from past 2+ years on a large scale and basic mobile applications. Why choose me: <br/>
 (1). 2+ years of experience. <br/>
