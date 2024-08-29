@@ -18,8 +18,3 @@ Skills: XML JAVA Python  mySQL Firebase HTML CSS
 
 
 
-
-![GitHub stats](https://github-readme-stats.vercel.app/api?username=Tarekuzjaman0&show_icons=true)  
-
-
-
