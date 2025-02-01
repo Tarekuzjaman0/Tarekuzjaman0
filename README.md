@@ -34,8 +34,8 @@
 
 ## 🌟 My GitHub Stats
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Tarequzzaman&show_icons=true&theme=radical" height="180px"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=Tarequzzaman&theme=radical" height="180px"/>
+  <img src="https://github-readme-stats.vercel.app/api?username=Tarekuzjaman0&show_icons=true&theme=radical" height="180px"/>
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=Tarekuzjaman0&theme=radical" height="180px"/>
 </p>
 
 ---
