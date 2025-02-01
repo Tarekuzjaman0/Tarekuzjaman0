@@ -1,4 +1,4 @@
-<h1 align="center">👋 Hi, I'm Tarequzzaman</h1>
+<h1 align="center">👋 Hi, I'm TarekuzJaman</h1>
 <h3 align="center">Bangladeshi Programmer & Mobile App Developer</h3>
 
 <p align="center">
