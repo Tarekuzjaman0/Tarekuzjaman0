@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Random Selector - Carrom King Theme</title>
+  
+  <!-- External dependencies -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  
+  <style>
+    /* 1. Import the new font */
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap');
+
+    /* Reset default styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 2. New Body and Background */
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+      background: url('https://media.crafto.app/creative/1080x1920/a8aa30ad-daa5-458d-8308-609075a5057e?dimension=1080x1920') center/cover no-repeat;
+      overflow: hidden;
+      touch-action: manipulation;
+      color: #f0f9ff; /* Default text color */
+    }
+
+    /* 3. New Title Style */
+    #main-title {
+      font-family: 'Fredoka One', cursive;
+      color: #fdd835; /* Gold */
+      text-shadow: 3px 3px 0px #8d6e63; /* 3D effect */
+    }
+    
+    /* 4. New Glow effect */
+    .glow {
+      box-shadow: 0 0 15px #fbc02d, 0 0 30px #fbc02d, 0 0 45px #ffc107;
+    }
+    
+    /* Congratulations overlay animation */
+    .congrats-overlay {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 100;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-weight: 900;
+      text-shadow: 0 4px 16px rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.6);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    /* 5. Updated Settings Panel */
+    .settings-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, #0d1242, #1e2a8a);
+      border-top: 3px solid #53aeff;
+      padding: 1.5rem;
+      border-radius: 1.5rem 1.5rem 0 0;
+      transform: translateY(100%);
+      transition: transform 0.4s ease-out;
+      z-index: 50;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    
+    .settings-panel.visible {
+      transform: translateY(0);
+    }
+    
+    /* Overlay for modal effects */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    
+    .overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    /* 6. Updated Wheel Container */
+    .wheel-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      height: 280px;
+      margin: 0 auto;
+      overflow: hidden;
+      border-radius: 1.5rem;
+      border: 3px solid #53aeff;
+      background: rgba(13, 71, 161, 0.7);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+    }
+    
+    #labels div {
+      transition: background-color 0.2s;
+      border-bottom: 2px solid rgba(83, 174, 255, 0.3);
+    }
+    
+    #labels div.highlight {
+      background: rgba(253, 216, 53, 0.15);
+    }
+    
+    /* Confetti animation */
+    @keyframes confettiFall {
+      0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    
+    .confetti {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      opacity: 0;
+      z-index: 99;
+    }
+    
+    /* 7. New Button Styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s ease-out;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #76ff03, #4caf50);
+      color: white;
+      border-radius: 50px;
+      font-size: 1.25rem;
+      padding: 1rem 2rem;
+      border: 3px solid #c5e1a5;
+      box-shadow: 0 6px 0 #388e3c, 0 8px 15px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.5);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 0 #388e3c, 0 12px 20px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.5);
+    }
+
+    .btn-primary:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #388e3c, 0 4px 5px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.5);
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(180deg, #448aff, #2962ff);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      border: 2px solid #bbdefb;
+      box-shadow: 0 4px 0 #0d47a1, 0 5px 10px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.4);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #0d47a1, 0 7px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.4);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 0 #0d47a1, 0 3px 6px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.4);
+    }
+    
+    /* 8. Themed Winner Card */
+    .winner-card-style {
+       border-radius: 1.5rem;
+      border: 3px solid #fdd835; /* Gold border for winner */
+      background: rgba(13, 71, 161, 0.8);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .pulse { animation: pulse 2s infinite; }
+    
+    @keyframes pulseSpin {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    .spin-animation { animation: pulseSpin 0.5s ease-in-out; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 antialiased">
+  <!-- Overlay for modal effects -->
+  <div id="overlay" class="overlay"></div>
+
+  <!-- Settings panel (initially hidden) -->
+  <div id="settingsPanel" class="settings-panel">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold">Settings</h2>
+      <button id="closeSettings" class="p-2 rounded-full bg-slate-700 hover:bg-slate-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-4 mb-6">
+      <label class="block text-sm text-slate-300 mb-2 font-medium" for="rawList">Participants (id:name)</label>
+      <textarea id="rawList" class="w-full h-32 rounded-lg bg-slate-800/70 border border-slate-700 px-4 py-3 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"></textarea>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button id="applyList" class="btn btn-primary flex-1">Apply</button>
+        <button id="loadFromUrl" class="btn btn-secondary">Reload</button>
+        <button id="shuffle" class="btn btn-secondary">Shuffle</button>
+      </div>
+    </div>
+    
+    <div class="text-center text-slate-400 text-xs">
+      <p>Example format: <span class="font-mono">1:Alice,2:Bob,3:Charlie</span></p>
+    </div>
+  </div>
+
+  <!-- Main application container -->
+  <div class="min-h-screen flex flex-col p-4 relative">
+    <header class="mb-6 text-center pt-4">
+      <h1 id="main-title" class="text-3xl font-bold pulse">Random Selector</h1>
+      <p class="text-slate-400 text-sm mt-2">Spin the wheel to select a random winner</p>
+    </header>
+
+    <!-- Main content area -->
+    <div class="flex-1 flex flex-col justify-center">
+      <!-- Wheel container with marker and labels -->
+      <div id="wheelBox" class="wheel-container mb-8">
+        <div id="marker" class="absolute top-1/2 left-0 right-0 mx-auto w-full h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent z-20 pointer-events-none"></div>
+        <div id="labels" class="absolute top-0 left-0 w-full will-change-transform"></div>
+      </div>
+
+      <!-- Result display (initially hidden) -->
+      <div id="result" class="mb-8 max-w-md mx-auto w-full hidden">
+        <div id="winnerCard" class="winner-card-style p-4 flex items-center gap-4 relative overflow-hidden">
+          <div class="w-12 h-12 rounded-full bg-emerald-500/20 grid place-items-center border border-emerald-500/30 flex-shrink-0">
+            <span class="text-lg" id="resInitial">🏆</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Winner</div>
+            <div class="text-lg font-bold truncate" id="resName"></div>
+            <div class="text-xs text-slate-500 mt-1" id="resId"></div>
+          </div>
+          <div id="confetti" class="absolute inset-0 pointer-events-none hidden"></div>
+        </div>
+      </div>
+
+      <!-- Spin button -->
+      <div class="text-center mb-6">
+        <button id="spinBtn" class="btn btn-primary">
+          <span class="mr-2">Spin</span> 
+          🎲
+        </button>
+      </div>
+    </div>
+
+    <!-- Settings button (top right) -->
+    <div class="fixed top-4 right-4 z-30">
+      <button id="settingsBtn" class="w-12 h-12 rounded-full bg-slate-800/80 backdrop-blur-sm grid place-items-center border border-slate-700/50 hover:bg-slate-700/80 transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Congratulations overlay (initially hidden) -->
+    <div id="congrats" class="congrats-overlay">
+      <div id="congratsText" class="text-5xl md:text-6xl font-extrabold text-center px-4 mb-4">🎉 Congratulations! 🎉</div>
+      <div class="mt-4 text-2xl opacity-90 font-bold" id="winnerAnnounce"></div>
+    </div>
+  </div>
+
+  <script>
+    // Utility function to get element by ID
+    const byId = (id) => document.getElementById(id);
+
+    // Toggle settings panel visibility
+    function toggleSettings() {
+      const panel = byId('settingsPanel');
+      const overlay = byId('overlay');
+      
+      panel.classList.toggle('visible');
+      overlay.classList.toggle('visible');
+      
+      // Prevent body scrolling when settings are open
+      document.body.style.overflow = panel.classList.contains('visible') ? 'hidden' : '';
+    }
+
+    // Parse participant list from URL parameters
+    function parseListParam() {
+      const q = new URLSearchParams(location.search);
+      const listParam = q.get('list') || '';
+      if (!listParam) return [];
+      const pairs = listParam.split(',').map(s => s.trim()).filter(Boolean);
+      return pairs.map(pair => {
+        const idx = pair.indexOf(':');
+        const id = idx === -1 ? '' : pair.slice(0, idx);
+        const name = idx === -1 ? pair : pair.slice(idx + 1);
+        return { id, name };
+      });
+    }
+
+    // Get initials from a name
+    function initialsOf(name) {
+      const parts = name.trim().split(/\s+/).filter(Boolean);
+      return parts.map(p => p[0]).join('').slice(0,2).toUpperCase() || '★';
+    }
+
+    // --- reel state ---
+    let baseItems = []; // Original list of participants
+    const REPEAT = 10; // Number of times to duplicate items for seamless loop
+    let itemHeight = 0; // Height of a single item in the wheel
+    let blockHeight = 0; // Height of one base block (baseItems.length * itemHeight)
+    let state = { y: 0 }; // Numeric state used by GSAP for animation
+    let idleTween = null; // Reference to the idle animation tween
+    let spinning = false; // Flag to track if wheel is currently spinning
+
+    // Render the wheel with participant items
+    function renderWheel(items) {
+      baseItems = items.slice();
+      const labels = byId('labels');
+      labels.innerHTML = '';
+
+      // Create DOM for REPEAT copies to create seamless loop
+      for (let r = 0; r < REPEAT; r++) {
+        items.forEach((item) => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center gap-3 px-4 py-4 text-base';
+
+          // Create avatar with initials
+          const avatar = document.createElement('div');
+          avatar.className = 'w-10 h-10 rounded-full bg-blue-900/80 grid place-items-center text-sm font-bold flex-shrink-0 border-2 border-blue-400';
+          avatar.textContent = initialsOf(item.name);
+
+          // Create name label
+          const label = document.createElement('div');
+          label.className = 'truncate font-semibold';
+          label.textContent = item.name;
+
+          row.appendChild(avatar);
+          row.appendChild(label);
+          labels.appendChild(row);
+        });
+      }
+
+      // Measure heights after paint and set up animation
+      requestAnimationFrame(() => {
+        const firstRow = labels.querySelector('div');
+        itemHeight = firstRow ? firstRow.offsetHeight : 56;
+        blockHeight = itemHeight * baseItems.length;
+
+        // Reset state and transform
+        state.y = 0;
+        gsap.set(labels, { y: 0 });
+
+        // Stop any previous idle animation and start fresh
+        stopIdleLoop();
+        startIdleLoop();
+      });
+    }
+
+    // Start infinite idle loop animation
+    function startIdleLoop() {
+      const labels = byId('labels');
+      if (idleTween) idleTween.kill();
+      
+      // Slow speed px/sec
+      const speed = 28; // Adjust for desired slow scroll
+      idleTween = gsap.to(state, {
+        y: `-=${blockHeight}`,
+        duration: Math.max(6, blockHeight / speed),
+        ease: 'none',
+        repeat: -1,
+        onUpdate: () => {
+          // Wrap the y position to create seamless loop
+          const wrapped = gsap.utils.wrap(-blockHeight, 0, state.y);
+          labels.style.transform = `translateY(${wrapped}px)`;
+        }
+      });
+    }
+
+    // Stop the idle animation loop
+    function stopIdleLoop() {
+      if (idleTween) {
+        idleTween.kill();
+        idleTween = null;
+      }
+    }
+
+    // Create confetti animation effect
+    function spawnConfetti() {
+      const colors = ['#fdd835','#76ff03','#448aff','#ff4081','#f87171','#a78bfa','#fb923c'];
+      const total = 120;
+      
+      for (let i = 0; i < total; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        const size = 6 + Math.random() * 10;
+        confetti.style.width = confetti.style.height = size + 'px';
+        confetti.style.background = colors[Math.floor(Math.random()*colors.length)];
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0%';
+        confetti.style.opacity = '1';
+        document.body.appendChild(confetti);
+
+        const animationDuration = 2 + Math.random() * 3;
+        confetti.style.animation = `confettiFall ${animationDuration}s linear forwards`;
+        
+        // Remove confetti element after animation completes
+        setTimeout(() => {
+          if (confetti.parentNode) {
+            confetti.parentNode.removeChild(confetti);
+          }
+        }, animationDuration * 1000);
+      }
+    }
+
+    // Show congratulations overlay with winner name
+    function showCongrats(winnerName) {
+      const el = byId('congrats');
+      const text = byId('congratsText');
+      const announce = byId('winnerAnnounce');
+      
+      announce.textContent = `${winnerName} wins!`;
+      el.style.opacity = '1';
+      
+      // Set initial state for animation
+      gsap.set([text, announce], { opacity: 0, scale: 0.5 });
+      
+      // Animate congratulations text
+      gsap.to(text, {
+        scale: 1,
+        opacity: 1,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.5)'
+      });
+      
+      // Animate winner announcement
+      gsap.to(announce, {
+        scale: 1,
+        opacity: 1,
+        delay: 0.4,
+        duration: 0.6,
+        ease: 'back.out(1.5)'
+      });
+      
+      // Add pulsing effect to text
+      gsap.to(text, {
+        scale: 1.1,
+        repeat: 3,
+        yoyo: true,
+        duration: 0.4,
+        delay: 1.0
+      });
+      
+      // Hide overlay after 4 seconds
+      setTimeout(() => {
+        el.style.opacity = '0';
+      }, 4000);
+    }
+
+    // Smooth spin sequence to select a random winner
+    function spinToSelect(items) {
+      if (!items.length || spinning) return;
+      spinning = true;
+
+      stopIdleLoop();
+
+      const btn = byId('spinBtn');
+      btn.disabled = true;
+      btn.classList.add('opacity-70');
+      byId('result').classList.add('hidden');
+      
+      // Add spin animation to button
+      btn.classList.add('spin-animation');
+      setTimeout(() => {
+        btn.classList.remove('spin-animation');
+      }, 500);
+      
+      // Select random winner
+      const winnerIndex = Math.floor(Math.random() * baseItems.length);
+      const currentWrapped = gsap.utils.wrap(-blockHeight, 0, state.y);
+      const wheelBox = byId('wheelBox');
+      const reelHeight = wheelBox.clientHeight;
+      const centerOffset = (reelHeight / 2) - (itemHeight / 2);
+      const middleCopyIndex = winnerIndex + baseItems.length;
+      const targetOffset = - (middleCopyIndex * itemHeight) + centerOffset;
+      const spins = 3 + Math.floor(Math.random() * 3); // Random number of spins
+      const delta = targetOffset - currentWrapped - (spins * blockHeight);
+      const finalY = state.y + delta;
+
+      // Create animation timeline
+      const tl = gsap.timeline({ onComplete: finish });
+      
+      // Initial acceleration
+      tl.to(state, { y: `-=${blockHeight * 0.6}`, duration: 0.45, ease: 'power2.out', onUpdate: applyWrapped });
+      // Main spinning phase
+      tl.to(state, { y: `-=${blockHeight * (spins)}`, duration: 2.2 + spins*0.25, ease: 'power2.inOut', onUpdate: applyWrapped });
+      // Brief pause
+      tl.to({}, { duration: 0.6 });
+      // Final slowdown to selected winner
+      tl.to(state, { y: finalY, duration: 2.2, ease: 'power4.out', onUpdate: applyWrapped });
+
+      // Apply wrapped position to DOM
+      function applyWrapped() {
+        const wrapped = gsap.utils.wrap(-blockHeight, 0, state.y);
+        byId('labels').style.transform = `translateY(${wrapped}px)`;
+      }
+
+      // Animation complete callback
+      function finish() {
+        state.y = gsap.utils.wrap(-blockHeight, 0, finalY);
+        byId('labels').style.transform = `translateY(${state.y}px)`;
+
+        // Display winner information
+        const winner = baseItems[winnerIndex];
+        byId('resName').textContent = winner.name;
+        byId('resId').textContent = winner.id ? `ID: ${winner.id}` : '';
+        byId('resInitial').textContent = initialsOf(winner.name);
+        byId('result').classList.remove('hidden');
+
+        // Add winner card animation
+        const wc = byId('winnerCard');
+        wc.classList.add('glow');
+        gsap.fromTo(wc, { scale: 0.96 }, { 
+          scale: 1.06, 
+          duration: 0.35, 
+          yoyo: true, 
+          repeat: 1, 
+          ease: 'power1.inOut', 
+          onComplete: () => wc.classList.remove('glow') 
+        });
+        
+        // Trigger celebration effects
+        spawnConfetti();
+        showCongrats(winner.name);
+        if (navigator.vibrate) navigator.vibrate([80,40,80]); // Haptic feedback if available
+
+        // Reset button state
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+        spinning = false;
+
+        // Restart idle animation after a delay
+        setTimeout(startIdleLoop, 900);
+      }
+    }
+
+    // Update URL with current participant list
+    function applyListToUrl(items) {
+      const pairs = items.map(u => `${u.id}:${u.name}`);
+      const encodedList = encodeURIComponent(pairs.join(','));
+      history.replaceState(null, '', `${location.pathname}?list=${encodedList}`);
+    }
+
+    // Update textarea with decoded participant list from URL
+    function decodedTextareaFromUrl(items) { 
+      byId('rawList').value = items.map(u => `${u.id}:${u.name}`).join(',');
+    }
+    
+    // Shuffle array randomly
+    function shuffleArray(arr) { 
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    // --- Initialize application ---
+    let participants = parseListParam();
+    
+    // Default participants if none provided in URL
+    if (!participants.length) {
+      participants = [
+        {id: '1', name: 'Alice'},
+        {id: '2', name: 'Bob'},
+        {id: '3', name: 'Charlie'},
+        {id: '4', name: 'Diana'},
+        {id: '5', name: 'Eve'},
+        {id: '6', name: 'Frank'},
+        {id: '7', name: 'Grace'},
+        {id: '8', name: 'Henry'}
+      ];
+    }
+
+    // Initialize the app when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      renderWheel(participants);
+      decodedTextareaFromUrl(participants);
+
+      // Event listeners
+      byId('spinBtn').addEventListener('click', () => spinToSelect(participants));
+      byId('settingsBtn').addEventListener('click', toggleSettings);
+      byId('closeSettings').addEventListener('click', toggleSettings);
+      byId('overlay').addEventListener('click', toggleSettings);
+
+      // Apply list from textarea
+      byId('applyList').addEventListener('click', () => {
+        const raw = byId('rawList').value.trim();
+        const items = raw.split(',').map(s => s.trim()).filter(Boolean).map(pair => {
+          const idx = pair.indexOf(':');
+          const id = idx === -1 ? '' : pair.slice(0, idx);
+          const name = idx === -1 ? pair : pair.slice(idx + 1);
+          return { id, name };
+        }).filter(x => x.name);
+        
+        participants = items;
+        stopIdleLoop();
+        renderWheel(items);
+        decodedTextareaFromUrl(items);
+        applyListToUrl(items);
+        toggleSettings(); // Close settings after applying
+      });
+
+      // Reload list from URL
+      byId('loadFromUrl').addEventListener('click', () => {
+        participants = parseListParam();
+        stopIdleLoop();
+        renderWheel(participants);
+        decodedTextareaFromUrl(participants);
+      });
+
+      // Shuffle participants
+      byId('shuffle').addEventListener('click', () => {
+        participants = shuffleArray(participants.slice());
+        stopIdleLoop();
+        renderWheel(participants);
+        decodedTextareaFromUrl(participants);
+      });
+
+      // Handle window resize
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        stopIdleLoop();
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => renderWheel(participants), 200);
+      });
+    });
+  </script>
+</body>
+</html>
